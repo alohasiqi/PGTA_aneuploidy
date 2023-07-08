@@ -2,7 +2,11 @@
 This repository contains the code and description for the paper "Identifying genes associated with the risk of maternal aneuploidy using PGT-A ultra-low-coverage whole-genome sequencing data". The aim of the paper is to introduce a generalizable method that can be leveraged for association studies using ultra-low-coverage whole-genome sequencing data (~.01x) with an example in identifying biomarkers related to infertility. 
 ## Workflow
 
-1. Mapping
+![alt text][logo]
+
+[logo]: https://github.com/alohasiqi/PGTA_aneuploidy/blob/main/workflow.png "Analysis workflow"
+
+### Mapping
    
 ```shellscript
    bwa mem GRCh38_full_analysis_set_plus_decoy_hla.fa -t 10 sample.fastq.gz > sample.sam
@@ -10,26 +14,32 @@ This repository contains the code and description for the paper "Identifying gen
    samtools sort sample.bam --threads 10 > sample.sorted.bam
  ```
 
-2. Genotype likelihood (gl) calculation
+### Genotype likelihood (gl) calculation
+   
+See scripts/gl_cal.sh
    
 This part is based on the step 3 of GLIMPSE tutorial (https://odelaneau.github.io/GLIMPSE/glimpse1/tutorial_b38.html#run_preliminaries)
 
-3. Association test
+### Association test
 
 - Ancestry inference
-   
+
+See scripts/ances_infer.sh
+
 This part is based on LASER tutorial (https://genome.sph.umich.edu/wiki/LASER)
 
 - Imputation
+
+See scripts/impute.sh
    
 This part is based on the steps 4-6 of GLIMPSE tutorial (https://odelaneau.github.io/GLIMPSE/glimpse1/tutorial_b38.html#run_preliminaries)
 
 - Generalized linear regression (GLM) test 
    
 ```r
-   glm(data = calculated_gl, formula = rate ~ ., family = "quasibinomial")
+   association <- glm(data = calculated_gl, formula = rate ~ ., family = "quasibinomial")
+   summary(association)
 ```
+- eQTL Analysis through Genotype-Tissue Expression (GTEx) (https://www.gtexportal.org/home/eqtlDashboardPage) 
 
-![alt text][logo]
 
-[logo]: https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Analysis workflow"
